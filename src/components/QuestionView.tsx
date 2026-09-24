@@ -1,12 +1,62 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { KIND_LABELS } from "@/lib/questions";
-import type { Question, Selection } from "@/lib/types";
+import type { Question, QuestionImage, Selection } from "@/lib/types";
 
 const MARKS = ["①", "②", "③", "④", "⑤", "⑥"];
 
 export function choiceMark(i: number) {
   return MARKS[i - 1] ?? `${i}.`;
+}
+
+/**
+ * Question picture. Loads eagerly (lazy-loading left some images blank on some browsers),
+ * never upscales small signs beyond 2x, and shows a visible message with a retry button
+ * if the file fails to load instead of an empty box.
+ */
+function QuestionImg({ img, alt }: { img: QuestionImage; alt: string }) {
+  const [attempt, setAttempt] = useState(0);
+  const [failed, setFailed] = useState(false);
+  const ref = useRef<HTMLImageElement>(null);
+  // An image that errored before hydration never fires onError; detect it here.
+  useEffect(() => {
+    const el = ref.current;
+    if (el && el.complete && el.naturalWidth === 0) setFailed(true);
+  }, [attempt]);
+  if (failed) {
+    return (
+      <div role="alert" className="grid min-h-40 place-items-center gap-2 rounded-xl border border-bad/40 bg-bad-soft p-4 text-center text-sm text-bad">
+        <p>The picture didn’t load. Check your connection.</p>
+        <button
+          type="button"
+          className="btn-secondary py-1.5"
+          onClick={() => {
+            setFailed(false);
+            setAttempt((a) => a + 1);
+          }}
+        >
+          Try again
+        </button>
+      </div>
+    );
+  }
+  const src = attempt ? `${img.src}?retry=${attempt}` : img.src;
+  return (
+    // Plain <img>: the files are already sized for the web; no optimisation pipeline needed.
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      ref={ref}
+      src={src}
+      width={img.width}
+      height={img.height}
+      alt={alt}
+      decoding="async"
+      onError={() => setFailed(true)}
+      style={{ maxWidth: Math.max(img.width * 2, 320) }}
+      className="h-auto w-full rounded-xl border border-line bg-white object-contain"
+    />
+  );
 }
 
 export function MissingMediaNotice({ q, compact = false }: { q: Question; compact?: boolean }) {
@@ -79,17 +129,7 @@ export function QuestionView({ q, selection = [], onToggle, reveal = false, disa
           {q.images.length > 0 && (
             <div className={`grid gap-2 ${q.images.length > 1 ? "grid-cols-2" : ""} ${q.notes.length === 0 ? "sm:col-span-2 sm:max-w-xl" : ""}`}>
               {q.images.map((img, i) => (
-                // Plain <img>: the files are already sized for the web; no optimisation pipeline needed.
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  key={img.src}
-                  src={img.src}
-                  width={img.width}
-                  height={img.height}
-                  alt={`Picture for question ${q.number}${q.images.length > 1 ? ` (${i + 1})` : ""}`}
-                  className="h-auto w-full rounded-xl border border-line bg-white object-contain"
-                  loading="lazy"
-                />
+                <QuestionImg key={img.src} img={img} alt={`Picture for question ${q.number}${q.images.length > 1 ? ` (${i + 1})` : ""}`} />
               ))}
             </div>
           )}

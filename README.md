@@ -79,6 +79,7 @@ npm start
 
 ```bash
 npm run validate     # question-bank validation report (see below)
+npm run verify:pdf   # independent re-check of every question against the PDF with pdf.js
 npm test             # unit tests (scoring, exam builder, validation on the real data)
 npm run lint
 npm run typecheck
@@ -113,6 +114,14 @@ Missing external media (video)     35  (966–1000)
 OK: all 1000 questions (1–1000) present with choices and answers.
 ```
 
+`npm run verify:pdf` re-reads `source/1.pdf` with Mozilla pdf.js, which shares no code with the importer. It splits the PDF at its 1,000 "■ Answer" markers and checks, for every question:
+- the block starts with the right number;
+- it contains the app's question text, every choice (4,186 in total) and every note (426);
+- the answer is identical;
+- nothing in the PDF is left over except the figure letters drawn into images (Q871, 883, 907, 908, 931).
+
+Its result is saved in `data/pdf-verification.json`: no problems. Planting a wrong answer, an altered choice or a dropped note makes it fail.
+
 Browser smoke test (desktop + phone viewports, 21 checks each, all passing): `e2e/smoke.mjs`. Run it with `npm i --no-save playwright && npx playwright install chromium`, start the app, then run `node e2e/smoke.mjs`.
 
 The scoring tests cover:
@@ -137,7 +146,7 @@ The importer:
 - trims white margins;
 - flags video questions.
 
-It writes `data/import-report.json`. That report would list any unassigned images, stray text or picture questions without images; all of those lists are currently empty. As a further check, every non-space character of the PDF's text was matched against the imported data. The only differences are the 16 figure letters rendered into images and the full-width colon `：` normalized in `■ Answer：`.
+It writes `data/import-report.json`. That report would list any unassigned images, stray text or picture questions without images; all of those lists are currently empty. As a further check, every non-space character of the PDF's text was matched against the imported data (see also `npm run verify:pdf` below). The only differences are the 16 figure letters rendered into images and the full-width colon `：` normalized in `■ Answer：`.
 
 ## Deploying to Vercel
 
