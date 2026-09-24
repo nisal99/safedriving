@@ -48,7 +48,7 @@ async function run(name, viewport, isMobile) {
 
   // Video question marked
   await page.goto(BASE + "/questions?n=970");
-  check((await page.getByText("Video not included in the PDF").count()) === 1, `${name}: Q970 missing-video banner`);
+  check((await page.getByText("This question needs a video").count()) === 1, `${name}: Q970 missing-video banner`);
 
   // Last question reachable
   await page.goto(BASE + "/questions?n=1000");

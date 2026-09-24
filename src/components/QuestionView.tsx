@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { KIND_LABELS } from "@/lib/questions";
+import { officialVideo } from "@/lib/videos";
 import type { Question, QuestionImage, Selection } from "@/lib/types";
 
 const MARKS = ["①", "②", "③", "④", "⑤", "⑥"];
@@ -61,14 +62,34 @@ function QuestionImg({ img, alt }: { img: QuestionImage; alt: string }) {
 
 export function MissingMediaNotice({ q, compact = false }: { q: Question; compact?: boolean }) {
   if (!q.missingMedia) return null;
-  if (compact) return <span className="chip bg-warn-soft text-warn">Video missing</span>;
+  if (compact) return <span className="chip bg-warn-soft text-warn">Video question</span>;
+  const video = officialVideo(q.number);
   return (
-    <div role="note" className="rounded-xl border border-warn/40 bg-warn-soft p-3 text-sm text-warn">
-      <p className="font-semibold">Video not included in the PDF</p>
-      <p className="mt-0.5 opacity-90">
-        This question depends on a video from the official test website, which is not part of the question bank you supplied. The
-        question, options and official answer are shown exactly as printed, but it can’t be answered fairly without the clip, so it is
-        left out of scored mock exams by default.
+    <div role="note" className="space-y-3 rounded-xl border border-warn/40 bg-warn-soft p-3 text-sm text-warn sm:p-4">
+      <div>
+        <p className="font-semibold">This question needs a video</p>
+        <p className="mt-0.5 opacity-90">
+          The video isn’t in the PDF question bank. Watch the official clip from KoROAD first, then answer. Video questions are left out
+          of scored mock exams by default.
+        </p>
+      </div>
+      {video && (
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+          <a href={video.file} target="_blank" rel="noopener noreferrer" className="btn-primary w-full sm:w-auto">
+            {video.format === "mp4" ? "▶ Watch official video (MP4)" : "⬇ Download official video (WMV)"}
+          </a>
+          <a href={video.page} target="_blank" rel="noopener noreferrer" className="btn-secondary w-full sm:w-auto">
+            Open KoROAD page
+          </a>
+        </div>
+      )}
+      {video && video.format !== "mp4" && (
+        <p className="text-xs text-ink/80">
+          WMV files don’t play in web browsers. After downloading, open it with VLC (free for phone and computer) or Windows Media Player.
+        </p>
+      )}
+      <p className="text-xs text-ink/70">
+        Source: KoROAD 학과시험 동영상 문제 (question {q.number}). Personal study only; KoROAD prohibits commercial use.
       </p>
     </div>
   );

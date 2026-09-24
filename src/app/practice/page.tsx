@@ -110,7 +110,7 @@ export default function PracticePage() {
                   className="h-4 w-4 accent-[var(--brand)]"
                 />
                 {KIND_LABELS[k]}
-                {k === "video" && <span className="text-xs text-warn">(video missing)</span>}
+                {k === "video" && <span className="text-xs text-warn">(watch KoROAD video)</span>}
               </label>
             ))}
           </div>

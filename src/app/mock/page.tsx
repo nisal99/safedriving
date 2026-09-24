@@ -134,7 +134,7 @@ function Setup() {
           <span>
             <span className="font-semibold text-warn">Leave out video questions (recommended)</span>
             <span className="block text-ink/80">
-              Questions 966–1000 need video clips that aren’t in the PDF, so they can’t be answered fairly. When left out, the exam has {config.composition.video} fewer
+              Questions 966–1000 need a video clip that isn’t in the PDF (each question links to the official KoROAD video), so they can’t be shown inside a timed exam. When left out, the exam has {config.composition.video} fewer
               question and the score is scaled to 100.
             </span>
           </span>

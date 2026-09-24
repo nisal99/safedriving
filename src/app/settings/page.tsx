@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { BUCKET_LABELS, BUCKETS, type Bucket, DEFAULT_EXAM_CONFIG, type ExamConfig, totalPoints, totalQuestions } from "@/lib/exam";
 import { QUESTIONS } from "@/lib/questions";
+import { InstallCard } from "@/components/InstallApp";
 import { exportProgress, importProgress, resetProgress, update, useHydrated, useProgress } from "@/lib/store";
 import { bucketOf } from "@/lib/exam";
 
@@ -61,55 +62,54 @@ export default function SettingsPage() {
           <NumberField label="Pass mark, Class 1" value={config.passMark.class1} max={100} onChange={(v) => set({ passMark: { ...config.passMark, class1: v } })} />
           <NumberField label="Pass mark, Class 2" value={config.passMark.class2} max={100} onChange={(v) => set({ passMark: { ...config.passMark, class2: v } })} />
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[480px] text-sm">
-            <thead className="text-left text-xs text-muted">
-              <tr>
-                <th className="py-1 font-medium">Question type</th>
-                <th className="py-1 text-right font-medium">In bank</th>
-                <th className="py-1 text-right font-medium">Questions</th>
-                <th className="py-1 text-right font-medium">Points each</th>
-              </tr>
-            </thead>
-            <tbody>
-              {BUCKETS.map((b) => (
-                <tr key={b} className="border-t border-line">
-                  <td className="py-2 pr-2">{BUCKET_LABELS[b]}</td>
-                  <td className="py-2 text-right tabular-nums text-muted">{AVAILABLE[b]}</td>
-                  <td className="py-2 text-right">
-                    <input
-                      type="number"
-                      className="input w-20 py-1 text-right"
-                      min={0}
-                      max={AVAILABLE[b]}
-                      value={config.composition[b]}
-                      onChange={(e) => set({ composition: { ...config.composition, [b]: Math.max(0, Math.min(AVAILABLE[b], Number(e.target.value) || 0)) } })}
-                      aria-label={`${BUCKET_LABELS[b]} count`}
-                    />
-                  </td>
-                  <td className="py-2 text-right">
-                    <input
-                      type="number"
-                      className="input w-20 py-1 text-right"
-                      min={0}
-                      max={20}
-                      value={config.points[b]}
-                      onChange={(e) => set({ points: { ...config.points, [b]: Math.max(0, Math.min(20, Number(e.target.value) || 0)) } })}
-                      aria-label={`${BUCKET_LABELS[b]} points`}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr className="border-t border-line font-semibold">
-                <td className="py-2">Total</td>
-                <td />
-                <td className="py-2 text-right tabular-nums">{totalQuestions(config)}</td>
-                <td className="py-2 text-right tabular-nums">{totalPoints(config)} pts</td>
-              </tr>
-            </tfoot>
-          </table>
+        <div className="divide-y divide-line rounded-xl border border-line text-sm">
+          <div className="hidden grid-cols-[1fr_4rem_6rem_6rem] gap-3 px-3 py-2 text-xs text-muted sm:grid">
+            <span>Question type</span>
+            <span className="text-right">In bank</span>
+            <span className="text-right">Questions</span>
+            <span className="text-right">Points each</span>
+          </div>
+          {BUCKETS.map((b) => (
+            <div key={b} className="grid grid-cols-2 gap-x-3 gap-y-2 px-3 py-3 sm:grid-cols-[1fr_4rem_6rem_6rem] sm:items-center sm:py-2">
+              <span className="col-span-2 font-medium sm:col-span-1 sm:font-normal">
+                {BUCKET_LABELS[b]}
+                <span className="ml-1 text-xs text-muted sm:hidden">({AVAILABLE[b]} in bank)</span>
+              </span>
+              <span className="hidden text-right tabular-nums text-muted sm:block">{AVAILABLE[b]}</span>
+              <label className="flex items-center justify-between gap-2 sm:block">
+                <span className="text-xs text-muted sm:hidden">Questions</span>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  className="input w-24 py-1.5 text-right sm:w-full"
+                  min={0}
+                  max={AVAILABLE[b]}
+                  value={config.composition[b]}
+                  onChange={(e) => set({ composition: { ...config.composition, [b]: Math.max(0, Math.min(AVAILABLE[b], Number(e.target.value) || 0)) } })}
+                  aria-label={`${BUCKET_LABELS[b]} count`}
+                />
+              </label>
+              <label className="flex items-center justify-between gap-2 sm:block">
+                <span className="text-xs text-muted sm:hidden">Points each</span>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  className="input w-24 py-1.5 text-right sm:w-full"
+                  min={0}
+                  max={20}
+                  value={config.points[b]}
+                  onChange={(e) => set({ points: { ...config.points, [b]: Math.max(0, Math.min(20, Number(e.target.value) || 0)) } })}
+                  aria-label={`${BUCKET_LABELS[b]} points`}
+                />
+              </label>
+            </div>
+          ))}
+          <div className="flex justify-between gap-3 px-3 py-2 font-semibold">
+            <span>Total</span>
+            <span className="tabular-nums">
+              {totalQuestions(config)} questions · {totalPoints(config)} pts
+            </span>
+          </div>
         </div>
         <label className="flex items-center gap-3 text-sm">
           <input type="checkbox" className="h-4 w-4 accent-[var(--brand)]" checked={config.excludeMissingMedia} onChange={(e) => set({ excludeMissingMedia: e.target.checked })} />
@@ -120,6 +120,8 @@ export default function SettingsPage() {
           Restore official defaults
         </button>
       </section>
+
+      <InstallCard />
 
       <section className="card space-y-3 p-4 sm:p-6">
         <h2 className="text-lg font-bold">Your progress</h2>

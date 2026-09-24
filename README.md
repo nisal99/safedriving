@@ -26,8 +26,33 @@ Every question keeps its original number, wording, options and the answer printe
 
 ### Media limitations
 
-- **Questions 966–1000 (35 questions) refer to videos** ("Refer to the website") that are **not in the PDF**. The app keeps these questions, with their text, options and official answer, and shows a clear "Video not included in the PDF" notice. No video content was invented. By default they are **left out of scored mock exams**, and you can turn that off in the mock-exam setup or in Settings. They can still be browsed and practised.
+- **Questions 966–1000 (35 questions) refer to videos** ("Refer to the website") that are **not in the PDF**. Each of these questions has buttons for its **official KoROAD video**, taken from the KoROAD video-question board (<https://www.safedriving.or.kr/subExamBoard/selectSubExamBoardMovieList.do>) using the newest Class 1/2 version of each question.
+  - The links are stored in `data/official-videos.json` and can be refreshed with `python3 scripts/fetch_video_links.py`.
+  - 18 videos are MP4 and play in the browser. 17 are WMV (966–972, 977, 979, 980, 987, 991, 992, 994, 995, 998, 999); browsers can't play WMV, so those download instead, and you open them with VLC or Windows Media Player.
+  - The videos aren't copied into this app, because KoROAD's pages say "※ 상업적 이용을 금지합니다" (commercial use prohibited).
+  - The KoROAD numbering matches this PDF: for all 15 video pages that show an answer, it equals the PDF's answer.
+  - By default these questions are **left out of scored mock exams** (you can turn that off in the mock-exam setup or in Settings). They can still be browsed and practised.
 - Every other question that uses a picture has its image. Pictures are cropped from the PDF at 2× resolution. Where the PDF labels pictures with letters (A–D, ㉠–㉣, Ⓐ–Ⓓ), the whole labelled figure is kept as one image so the letters stay next to their pictures (Q871, 883, 907, 908, 931).
+
+## Install as an app (phone and computer)
+
+The site can be installed as an app (a PWA) and used offline:
+
+| Device | How |
+|---|---|
+| **Computer:** Chrome or Edge (Windows, Mac, Linux, ChromeOS) | Click the install icon at the right of the address bar, or the **Install app** button in the header |
+| **Android:** Chrome, Samsung Internet or Edge | Tap **Install app** in the app (or ⋮ → **Install app**) |
+| **iPhone / iPad:** Safari | Tap Share → **Add to Home Screen** (the app shows these steps) |
+| **Mac:** Safari 17+ | File → **Add to Dock** |
+
+Once installed, it opens full-screen with its own icon. Tap **Save for offline** (on the Home or Settings page) to store every page and all 285 pictures, about 12 MB, on the device; after that it works without internet.
+
+How it's built:
+- `src/app/manifest.ts` is the web app manifest; the icons are in `public/icons/` and `src/app/icon.png` / `apple-icon.png`.
+- `public/sw.js` is the service worker. Pages load from the network first, so they're always up to date when online, and from the cache when offline. Scripts and pictures load from the cache first.
+- `src/lib/pwa.ts` and `src/components/InstallApp.tsx` handle the install button, the per-device instructions and offline saving.
+
+Checked: Chrome reports no installability errors. With the network switched off, every page, all pictures and a mock exam work.
 
 ## Official test rules (mock-exam defaults)
 
@@ -80,6 +105,7 @@ npm start
 ```bash
 npm run validate     # question-bank validation report (see below)
 npm run verify:pdf   # independent re-check of every question against the PDF with pdf.js
+node e2e/responsive.mjs  # layout check at 14 screen sizes (needs the app running + playwright)
 npm test             # unit tests (scoring, exam builder, validation on the real data)
 npm run lint
 npm run typecheck

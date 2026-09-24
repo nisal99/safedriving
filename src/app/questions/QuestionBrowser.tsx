@@ -18,7 +18,7 @@ const FILTERS: { id: Filter; label: string }[] = [
   { id: "picture", label: KIND_LABELS.picture },
   { id: "situation", label: KIND_LABELS.situation },
   { id: "two", label: "2-answer" },
-  { id: "video", label: "Video (missing)" },
+  { id: "video", label: "Video questions" },
   { id: "saved", label: "★ Saved" },
   { id: "wrong", label: "Wrong" },
 ];
@@ -152,19 +152,19 @@ function List({ params, setParams }: { params: URLSearchParams; setParams: (n: R
       )}
 
       {pages > 1 && (
-        <nav className="flex items-center justify-center gap-2" aria-label="Pages">
-          <button className="btn-secondary" disabled={page <= 1} onClick={() => setParams({ p: String(page - 1) })}>
-            ← Prev
+        <nav className="mx-auto grid max-w-md grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2" aria-label="Pages">
+          <button className="btn-secondary px-3" disabled={page <= 1} onClick={() => setParams({ p: String(page - 1) })} aria-label="Previous page">
+            ←<span className="hidden sm:inline"> Prev</span>
           </button>
-          <select className="input w-auto" value={page} onChange={(e) => setParams({ p: e.target.value })} aria-label="Page">
+          <select className="input min-w-0 truncate" value={page} onChange={(e) => setParams({ p: e.target.value })} aria-label="Page">
             {Array.from({ length: pages }, (_, i) => (
               <option key={i} value={i + 1}>
                 Page {i + 1} (Q{results[i * PAGE].number}–{results[Math.min(results.length, (i + 1) * PAGE) - 1].number})
               </option>
             ))}
           </select>
-          <button className="btn-secondary" disabled={page >= pages} onClick={() => setParams({ p: String(page + 1) })}>
-            Next →
+          <button className="btn-secondary px-3" disabled={page >= pages} onClick={() => setParams({ p: String(page + 1) })} aria-label="Next page">
+            <span className="hidden sm:inline">Next </span>→
           </button>
         </nav>
       )}

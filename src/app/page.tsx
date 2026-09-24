@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { QUESTIONS } from "@/lib/questions";
+import { InstallCard } from "@/components/InstallApp";
 import { useHydrated, useProgress } from "@/lib/store";
 
 export default function Home() {
@@ -90,8 +91,10 @@ export default function Home() {
         ))}
       </section>
 
+      <InstallCard />
+
       <p className="text-xs text-muted">
-        Questions 966–1000 refer to videos on the official website that aren’t in the PDF. They’re included for browsing and clearly marked, and left out
+        Questions 966–1000 need videos that aren’t in the PDF; each one links to its official KoROAD video. They’re included for browsing and practice, and left out
         of scored mock exams by default. Progress is saved in this browser only — use Settings to back it up.
       </p>
     </div>
