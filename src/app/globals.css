@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+/* Palette borrowed from Korean road signage: sign blue, caution amber, clear green/red feedback. */
+:root {
+  --bg: #f5f7fb;
+  --surface: #ffffff;
+  --surface-2: #eef2f8;
+  --border: #d9e0ea;
+  --text: #111827;
+  --muted: #5b6474;
+  --brand: #1d4ed8;
+  --brand-strong: #1e40af;
+  --brand-soft: #e0e8ff;
+  --ok: #047857;
+  --ok-soft: #d1fae5;
+  --bad: #b91c1c;
+  --bad-soft: #fee2e2;
+  --warn: #92400e;
+  --warn-soft: #fef3c7;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b1020;
+    --surface: #131a2e;
+    --surface-2: #1b2440;
+    --border: #2a3558;
+    --text: #e8ecf5;
+    --muted: #9aa5bd;
+    --brand: #6d95ff;
+    --brand-strong: #8fb0ff;
+    --brand-soft: #1c2a55;
+    --ok: #34d399;
+    --ok-soft: #0f3b2e;
+    --bad: #f87171;
+    --bad-soft: #451a1a;
+    --warn: #fbbf24;
+    --warn-soft: #3b2c0a;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--border);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-soft: var(--brand-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --font-sans: ui-sans-serif, -apple-system, "Segoe UI", Roboto, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition select-none disabled:opacity-50 disabled:cursor-not-allowed;
+}
+@utility btn-primary {
+  @apply btn bg-brand text-white hover:bg-brand-strong dark:text-[#0b1020];
+}
+@utility btn-secondary {
+  @apply btn border border-line bg-surface text-ink hover:bg-surface-2;
+}
+@utility btn-ghost {
+  @apply btn text-muted hover:bg-surface-2 hover:text-ink;
+}
+@utility card {
+  @apply rounded-2xl border border-line bg-surface;
+}
+@utility input {
+  @apply w-full rounded-xl border border-line bg-surface px-3 py-2.5 text-base text-ink placeholder:text-muted outline-none focus:border-brand focus:ring-2 focus:ring-brand/30;
+}
+@utility chip {
+  @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold;
+}
