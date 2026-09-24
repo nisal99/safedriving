@@ -142,7 +142,7 @@ It writes `data/import-report.json`. That report would list any unassigned image
 ## Deploying to Vercel
 
 1. Push this repository to GitHub.
-2. On <https://vercel.com/new>, import the repository. Vercel detects Next.js automatically; no settings or environment variables are needed.
+2. On <https://vercel.com/new>, import the repository. `vercel.json` pins the framework to Next.js, so no settings or environment variables are needed (this also covers a Vercel project created before the app code existed, whose "Framework Preset" is still "Other").
 3. Click **Deploy**. Every push to the production branch redeploys.
 
 With the Vercel CLI instead:
